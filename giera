@@ -1,0 +1,122 @@
+using System;
+using System.Drawing;
+using System.Windows.Forms;
+
+public class GraForm : Form
+{
+    private PictureBox pictureBoxGracz;
+    private PictureBox pictureBoxWróg;
+    private Button buttonAtakuj;
+    private Gracz gracz;
+    private Wróg wróg;
+
+    public GraForm()
+    {
+        this.Text = "Gra z Grafiką";
+        this.Size = new Size(800, 600);
+
+        gracz = new Gracz("Gracz");
+        wróg = new Wróg("Wróg");
+
+        pictureBoxGracz = new PictureBox
+        {
+            Image = Image.FromFile("gracz.png"), 
+            Size = new Size(50, 50),
+            Location = new Point(100, 100),
+            SizeMode = PictureBoxSizeMode.StretchImage
+        };
+        this.Controls.Add(pictureBoxGracz);
+
+        pictureBoxWróg = new PictureBox
+        {
+            Image = Image.FromFile("wróg.png"), 
+            Size = new Size(50, 50),
+            Location = new Point(600, 100),
+            SizeMode = PictureBoxSizeMode.StretchImage
+        };
+        this.Controls.Add(pictureBoxWróg);
+
+        buttonAtakuj = new Button
+        {
+            Text = "Atakuj",
+            Location = new Point(350, 500)
+        };
+        buttonAtakuj.Click += ButtonAtakuj_Click;
+        this.Controls.Add(buttonAtakuj);
+    }
+
+    private void ButtonAtakuj_Click(object sender, EventArgs e)
+    {
+        gracz.Atakuj(wróg); 
+        if (wróg.Zdrowie <= 0)
+        {
+            MessageBox.Show("Gratulacje! Pokonałeś wroga!");
+        }
+        else
+        {
+            wróg.Atakuj(gracz);
+            if (gracz.Zdrowie <= 0)
+            {
+                MessageBox.Show("Przegrałeś!");
+            }
+        }
+    }
+}
+
+public class Gracz
+{
+    public string Imie;
+    public int Zdrowie;
+    public int SilaAtaku;
+
+    public Gracz(string imie)
+    {
+        Imie = imie;
+        Zdrowie = 100;
+        SilaAtaku = 10;
+    }
+
+    public void Atakuj(Wróg wróg)
+    {
+        wróg.OtrzymajObrazenia(SilaAtaku);
+    }
+
+    public void OtrzymajObrazenia(int obrazenia)
+    {
+        Zdrowie -= obrazenia;
+        Console.WriteLine(Imie + " otrzymuje " + obrazenia + " obrażeń.");
+    }
+}
+
+public class Wróg
+{
+    public string Imie;
+    public int Zdrowie;
+    public int SilaAtaku;
+
+    public Wróg(string imie)
+    {
+        Imie = imie;
+        Zdrowie = 50;
+        SilaAtaku = 8;
+    }
+
+    public void Atakuj(Gracz gracz)
+    {
+        gracz.OtrzymajObrazenia(SilaAtaku);
+    }
+
+    public void OtrzymajObrazenia(int obrazenia)
+    {
+        Zdrowie -= obrazenia;
+        Console.WriteLine(Imie + " otrzymuje " + obrazenia + " obrażeń.");
+    }
+}
+
+public static class Program
+{
+    public static void Main()
+    {
+        Application.Run(new GraForm());
+    }
+}
